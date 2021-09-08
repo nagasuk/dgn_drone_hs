@@ -1,0 +1,3 @@
+[submodule "project/ip/mBldcm"]
+	path = project/ip/mBldcm
+	url = https://github.com/nagasuk/mBldcm.git

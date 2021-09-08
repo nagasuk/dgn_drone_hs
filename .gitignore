@@ -1,0 +1,20 @@
+# Directory for user to generate bootloader
+/project/software/*
+
+# Someting generated at building
+/poroject/DE10_NANO_SoC_GHRD.qws
+/poroject/c5_pin_model_dump.txt
+/poroject/hps_isw_handoff/
+/poroject/hps_sdram_p0_all_pins.txt
+/poroject/hps_sdram_p0_summary.csv
+/poroject/incremental_db/
+/poroject/db/
+/poroject/output_files/
+/poroject/simulation/
+/poroject/soc_system.sopcinfo
+/poroject/soc_system/
+/poroject/stamp/
+
+# Exclude
+!.gitkeep
+
