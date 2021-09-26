@@ -116,11 +116,16 @@ AR_FILE := $(AR_DIR)/$(basename $(firstword $(wildcard *.qpf)))_$(AR_TIMESTAMP).
 SOFTWARE_DIR := software
 PRELOADER_DIR := $(SOFTWARE_DIR)/preloader
 
+HWSYSVER_FILE := hwsysver.txt
+HWSYSVER_HEX := system_version_rom.hex
+SCRIPTS_DIR := bin
+
 AR_REGEX += \
 	Makefile ip readme.txt ds5 \
 	altera_avalon* *.qpf *.qsf *.sdc *.v *.sv *.vhd *.qsys *.tcl *.terp *.stp \
 	*.sed quartus.ini *.sof *.rbf *.sopcinfo *.jdi output_files \
 	hps_isw_handoff */*.svd */synthesis/*.svd */synth/*.svd *.dts *.dtb *.xml \
+	$(HWSYSVER_FILE) $(HWSYSVER_HEX) $(SCRIPTS_DIR) \
 	$(SOFTWARE_DIR)
 
 AR_FILTER_OUT += %_tb.qsys
@@ -194,7 +199,7 @@ QUARTUS_HDL_SOURCE := $(wildcard *.v *.sv *.vhd)
 QUARTUS_MISC_SOURCE := $(wildcard *.stp *.sdc)
 
 QUARTUS_PIN_ASSIGNMENTS_STAMP := $(call get_stamp_target,quartus_pin_assignments)
-QUARTUS_DEPS += $(QUARTUS_QPF) $(QUARTUS_QSF) $(QUARTUS_HDL_SOURCE) $(QUARTUS_MISC_SOURCE) $(QSYS_STAMP) $(QSYS_QIP) $(QUARTUS_PIN_ASSIGNMENTS_STAMP)
+QUARTUS_DEPS += $(QUARTUS_QPF) $(QUARTUS_QSF) $(QUARTUS_HDL_SOURCE) $(QUARTUS_MISC_SOURCE) $(QSYS_STAMP) $(QSYS_QIP) $(QUARTUS_PIN_ASSIGNMENTS_STAMP) $(HWSYSVER_HEX)
 
 QUARTUS_SOF := output_files/$(QUARTUS_BASE).sof
 QUARTUS_STAMP := $(call get_stamp_target,quartus)
@@ -238,6 +243,15 @@ $(QUARTUS_STAMP): $(QUARTUS_DEPS)
 	quartus_stp $(QUARTUS_BASE)
 	quartus_sh --flow compile $(QUARTUS_QPF)
 	$(stamp_target)
+
+# Generation of DGN Drone H/W System Version Hexfile
+GEN_HWSYSVER := gen_system_version_rom_hex.sh
+$(HWSYSVER_HEX): $(HWSYSVER_FILE)
+	@$(ECHO) "H/W System Version String is ..."
+	@$(ECHO) -n ' - "'
+	@$(CAT) $< | tee >($(SCRIPTS_DIR)/$(GEN_HWSYSVER) > $@) | tr -d '\n'
+	@$(ECHO) '"'
+	@$(ECHO) "Conversion Completed."
 
 HELP_TARGETS += quartus_edit
 quartus_edit.HELP := Launch Quartus II GUI

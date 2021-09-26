@@ -2,18 +2,18 @@
 /project/software/*
 
 # Someting generated at building
-/poroject/DE10_NANO_SoC_GHRD.qws
-/poroject/c5_pin_model_dump.txt
-/poroject/hps_isw_handoff/
-/poroject/hps_sdram_p0_all_pins.txt
-/poroject/hps_sdram_p0_summary.csv
-/poroject/incremental_db/
-/poroject/db/
-/poroject/output_files/
-/poroject/simulation/
-/poroject/soc_system.sopcinfo
-/poroject/soc_system/
-/poroject/stamp/
+/project/DE10_NANO_SoC_GHRD.qws
+/project/c5_pin_model_dump.txt
+/project/hps_isw_handoff/
+/project/hps_sdram_p0_all_pins.txt
+/project/hps_sdram_p0_summary.csv
+/project/incremental_db/
+/project/db/
+/project/output_files/
+/project/simulation/
+/project/soc_system.sopcinfo
+/project/soc_system/
+/project/stamp/
 
 # Exclude
 !.gitkeep

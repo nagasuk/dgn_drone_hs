@@ -90,10 +90,26 @@ module DE10_NANO_SoC_GHRD(
     input               ADC_SDO,
 
     //////////// GPIO0 //////////
-    inout    [35: 0]    GPIO0
+    inout    [35: 0]    GPIO0,
+    inout    [35: 0]    GPIO1
 );
 
 
+//=======================================================
+//  Parameter declarations
+//=======================================================
+// [BLDCM]
+localparam [2:0] pBldcm_UhId = 3'd5;
+localparam [2:0] pBldcm_UlId = 3'd4;
+localparam [2:0] pBldcm_VhId = 3'd3;
+localparam [2:0] pBldcm_VlId = 3'd2;
+localparam [2:0] pBldcm_WhId = 3'd1;
+localparam [2:0] pBldcm_WlId = 3'd0;
+// [Motor Function Output]
+localparam [1:0] pMotorFunc_PwrEnId    = 2'h0;
+localparam [1:0] pMotorFunc_Sel1_2Id   = 2'h1;
+localparam [1:0] pMotorFunc_Sel3_4Id   = 2'h2;
+localparam [1:0] pMotorFunc_Sel12_34Id = 2'h3;
 
 //=======================================================
 //  REG/WIRE declarations
@@ -108,28 +124,71 @@ wire                hps_debug_reset;
 wire     [27: 0]    stm_hw_events;
 wire                fpga_clk_50;
 // GPIO to use SPI
-wire                spi_bmx055_sclk;
-wire                spi_bmx055_mosi;
-wire                spi_bmx055_miso;
-wire                spi_bmx055_ss;
+wire                spi_sclk;
+wire                spi_mosi;
+wire                spi_miso;
+wire                spi_ss;
 // GPIO to use I2C
 wire                i2c_scl_in;
 wire                i2c_sda_in;
 wire                i2c_scl_oe;
 wire                i2c_sda_oe;
+// GPIO to use BLDCM
+wire [5:0]          bldcm[0:3];
+// GPIO to use Motor Function Output
+wire [3:0]          motor_func_o;
 
 
 // connection to GPIO to use SPI
-assign              GPIO0[0]        = spi_bmx055_sclk;
-assign              GPIO0[2]        = spi_bmx055_mosi;
-assign              spi_bmx055_miso = GPIO0[4];
-assign              GPIO0[6]        = spi_bmx055_ss;
+assign              GPIO1[14] = spi_sclk;
+assign              GPIO1[10] = spi_mosi;
+assign              spi_miso  = GPIO1[12];
+assign              GPIO1[8]  = spi_ss;
 
 // connection to GPIO to use I2C
-assign              i2c_scl_in = GPIO0[1];
-assign              i2c_sda_in = GPIO0[3];
-assign              GPIO0[1] = i2c_scl_oe ? 1'b0 : 1'bz;
-assign              GPIO0[3] = i2c_sda_oe ? 1'b0 : 1'bz;
+assign              i2c_scl_in = GPIO1[18];
+assign              i2c_sda_in = GPIO1[16];
+assign              GPIO1[18]  = i2c_scl_oe ? 1'b0 : 1'bz;
+assign              GPIO1[16]  = i2c_sda_oe ? 1'b0 : 1'bz;
+
+// connection of BLDCM
+// [BLDCM0]
+assign GPIO0[1]  = bldcm[0][pBldcm_UhId];
+assign GPIO0[3]  = bldcm[0][pBldcm_UlId];
+assign GPIO0[5]  = bldcm[0][pBldcm_VhId];
+assign GPIO0[7]  = bldcm[0][pBldcm_VlId];
+assign GPIO0[9]  = bldcm[0][pBldcm_WhId];
+assign GPIO0[11] = bldcm[0][pBldcm_WlId];
+
+// [BLDCM1]
+assign GPIO0[25] = bldcm[1][pBldcm_UhId];
+assign GPIO0[27] = bldcm[1][pBldcm_UlId];
+assign GPIO0[29] = bldcm[1][pBldcm_VhId];
+assign GPIO0[31] = bldcm[1][pBldcm_VlId];
+assign GPIO0[33] = bldcm[1][pBldcm_WhId];
+assign GPIO0[35] = bldcm[1][pBldcm_WlId];
+
+// [BLDCM2]
+assign GPIO1[1]  = bldcm[2][pBldcm_UhId];
+assign GPIO1[3]  = bldcm[2][pBldcm_UlId];
+assign GPIO1[5]  = bldcm[2][pBldcm_VhId];
+assign GPIO1[7]  = bldcm[2][pBldcm_VlId];
+assign GPIO1[9]  = bldcm[2][pBldcm_WhId];
+assign GPIO1[11] = bldcm[2][pBldcm_WlId];
+
+// [BLDCM3]
+assign GPIO1[25] = bldcm[3][pBldcm_UhId];
+assign GPIO1[27] = bldcm[3][pBldcm_UlId];
+assign GPIO1[29] = bldcm[3][pBldcm_VhId];
+assign GPIO1[31] = bldcm[3][pBldcm_VlId];
+assign GPIO1[33] = bldcm[3][pBldcm_WhId];
+assign GPIO1[35] = bldcm[3][pBldcm_WlId];
+
+// connection of Motor Function Output
+assign GPIO1[34] = motor_func_o[pMotorFunc_PwrEnId];
+assign GPIO0[34] = motor_func_o[pMotorFunc_Sel1_2Id];
+assign GPIO1[0]  = motor_func_o[pMotorFunc_Sel3_4Id];
+assign GPIO0[32] = motor_func_o[pMotorFunc_Sel12_34Id];
 
 // connection of internal logics
 assign LED[7: 1] = fpga_led_internal;
@@ -235,22 +294,42 @@ soc_system u0(
                .adc_external_interface_dout(ADC_SDO),           //                               .dout
                .adc_external_interface_din(ADC_SDI),            //                               .din
 
-               .spi_bmx055_external_connection_MISO(spi_bmx055_miso),   // spi_bmx055_external_connection.MISO
-               .spi_bmx055_external_connection_MOSI(spi_bmx055_mosi),   //                               .MOSI
-               .spi_bmx055_external_connection_SCLK(spi_bmx055_sclk),   //                               .SCLK
-               .spi_bmx055_external_connection_SS_n(spi_bmx055_ss),     //                               .SS_n
+               .spi_external_connection_MISO(spi_miso),   // spi_external_connection.MISO
+               .spi_external_connection_MOSI(spi_mosi),   //                               .MOSI
+               .spi_external_connection_SCLK(spi_sclk),   //                               .SCLK
+               .spi_external_connection_SS_n(spi_ss),     //                               .SS_n
 
                .i2c_external_connection_sda_in(i2c_sda_in),        //        i2c_external_connection.sda_in
                .i2c_external_connection_scl_in(i2c_scl_in),        //                               .scl_in
                .i2c_external_connection_sda_oe(i2c_sda_oe),        //                               .sda_oe
                .i2c_external_connection_scl_oe(i2c_scl_oe),        //                               .scl_oe
 
-               .mbldcm_0_phase_drive_u_phase_highside (GPIO0[7]), //           mbldcm_0_phase_drive.u_phase_highside
-               .mbldcm_0_phase_drive_u_phase_lowside  (GPIO0[8]),  //                               .u_phase_lowside
-               .mbldcm_0_phase_drive_v_phase_highside (GPIO0[9]), //                               .v_phase_highside
-               .mbldcm_0_phase_drive_v_phase_lowside  (GPIO0[10]),  //                               .v_phase_lowside
-               .mbldcm_0_phase_drive_w_phase_highside (GPIO0[11]), //                               .w_phase_highside
-               .mbldcm_0_phase_drive_w_phase_lowside  (GPIO0[12])  //                               .w_phase_lowside
+               .mbldcm_0_phase_drive_u_phase_highside (bldcm[0][pBldcm_UhId]), //           mbldcm_0_phase_drive.u_phase_highside
+               .mbldcm_0_phase_drive_u_phase_lowside  (bldcm[0][pBldcm_UlId]),  //                              .u_phase_lowside
+               .mbldcm_0_phase_drive_v_phase_highside (bldcm[0][pBldcm_VhId]), //                               .v_phase_highside
+               .mbldcm_0_phase_drive_v_phase_lowside  (bldcm[0][pBldcm_VlId]),  //                              .v_phase_lowside
+               .mbldcm_0_phase_drive_w_phase_highside (bldcm[0][pBldcm_WhId]), //                               .w_phase_highside
+               .mbldcm_0_phase_drive_w_phase_lowside  (bldcm[0][pBldcm_WlId]), //                               .w_phase_lowside
+               .mbldcm_1_phase_drive_u_phase_highside (bldcm[1][pBldcm_UhId]),   //         mbldcm_2_phase_drive.u_phase_highside
+               .mbldcm_1_phase_drive_u_phase_lowside  (bldcm[1][pBldcm_UlId]),    //                            .u_phase_lowside
+               .mbldcm_1_phase_drive_v_phase_highside (bldcm[1][pBldcm_VhId]),   //                             .v_phase_highside
+               .mbldcm_1_phase_drive_v_phase_lowside  (bldcm[1][pBldcm_VlId]),    //                            .v_phase_lowside
+               .mbldcm_1_phase_drive_w_phase_highside (bldcm[1][pBldcm_WhId]),   //                             .w_phase_highside
+               .mbldcm_1_phase_drive_w_phase_lowside  (bldcm[1][pBldcm_WlId]),    //                            .w_phase_lowside
+               .mbldcm_2_phase_drive_u_phase_highside (bldcm[2][pBldcm_UhId]),   //         mbldcm_2_phase_drive.u_phase_highside
+               .mbldcm_2_phase_drive_u_phase_lowside  (bldcm[2][pBldcm_UlId]),    //                            .u_phase_lowside
+               .mbldcm_2_phase_drive_v_phase_highside (bldcm[2][pBldcm_VhId]),   //                             .v_phase_highside
+               .mbldcm_2_phase_drive_v_phase_lowside  (bldcm[2][pBldcm_VlId]),    //                            .v_phase_lowside
+               .mbldcm_2_phase_drive_w_phase_highside (bldcm[2][pBldcm_WhId]),   //                             w_phase_highside
+               .mbldcm_2_phase_drive_w_phase_lowside  (bldcm[2][pBldcm_WlId]),    //                            .w_phase_lowside
+               .mbldcm_3_phase_drive_u_phase_highside (bldcm[3][pBldcm_UhId]),   //         mbldcm_3_phase_drive.u_phase_highside
+               .mbldcm_3_phase_drive_u_phase_lowside  (bldcm[3][pBldcm_UlId]),    //                            .u_phase_lowside
+               .mbldcm_3_phase_drive_v_phase_highside (bldcm[3][pBldcm_VhId]),   //                             .v_phase_highside
+               .mbldcm_3_phase_drive_v_phase_lowside  (bldcm[3][pBldcm_VlId]),    //                            .v_phase_lowside
+               .mbldcm_3_phase_drive_w_phase_highside (bldcm[3][pBldcm_WhId]),   //                             .w_phase_highside
+               .mbldcm_3_phase_drive_w_phase_lowside  (bldcm[3][pBldcm_WlId]),    //                            .w_phase_lowside
+               .motorfunc_po_external_connection_export (motor_func_o)  // motorfunc_po_external_connection.export
+
            );
 
 // Debounce logic to clean out glitches within 1ms
