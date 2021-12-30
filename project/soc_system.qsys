@@ -1250,7 +1250,8 @@
   <parameter name="simDrivenValue" value="0" />
   <parameter name="width" value="7" />
  </module>
- <module name="mBldcm_0" kind="mBldcm" version="2.0" enabled="1">
+ <module name="mBldcm_0" kind="mBldcm" version="2.10" enabled="1">
+  <parameter name="pDeadTimeClockCycle" value="9" />
   <parameter name="pFreqClock" value="50000000" />
   <parameter name="pInvertUh" value="false" />
   <parameter name="pInvertUl" value="false" />
@@ -1258,9 +1259,9 @@
   <parameter name="pInvertVl" value="false" />
   <parameter name="pInvertWh" value="false" />
   <parameter name="pInvertWl" value="false" />
-  <parameter name="pPwmDeadTimeClockCycle" value="10" />
  </module>
- <module name="mBldcm_1" kind="mBldcm" version="2.0" enabled="1">
+ <module name="mBldcm_1" kind="mBldcm" version="2.10" enabled="1">
+  <parameter name="pDeadTimeClockCycle" value="9" />
   <parameter name="pFreqClock" value="50000000" />
   <parameter name="pInvertUh" value="false" />
   <parameter name="pInvertUl" value="false" />
@@ -1268,9 +1269,9 @@
   <parameter name="pInvertVl" value="false" />
   <parameter name="pInvertWh" value="false" />
   <parameter name="pInvertWl" value="false" />
-  <parameter name="pPwmDeadTimeClockCycle" value="10" />
  </module>
- <module name="mBldcm_2" kind="mBldcm" version="2.0" enabled="1">
+ <module name="mBldcm_2" kind="mBldcm" version="2.10" enabled="1">
+  <parameter name="pDeadTimeClockCycle" value="9" />
   <parameter name="pFreqClock" value="50000000" />
   <parameter name="pInvertUh" value="false" />
   <parameter name="pInvertUl" value="false" />
@@ -1278,9 +1279,9 @@
   <parameter name="pInvertVl" value="false" />
   <parameter name="pInvertWh" value="false" />
   <parameter name="pInvertWl" value="false" />
-  <parameter name="pPwmDeadTimeClockCycle" value="10" />
  </module>
- <module name="mBldcm_3" kind="mBldcm" version="2.0" enabled="1">
+ <module name="mBldcm_3" kind="mBldcm" version="2.10" enabled="1">
+  <parameter name="pDeadTimeClockCycle" value="9" />
   <parameter name="pFreqClock" value="50000000" />
   <parameter name="pInvertUh" value="false" />
   <parameter name="pInvertUl" value="false" />
@@ -1288,7 +1289,6 @@
   <parameter name="pInvertVl" value="false" />
   <parameter name="pInvertWh" value="false" />
   <parameter name="pInvertWl" value="false" />
-  <parameter name="pPwmDeadTimeClockCycle" value="10" />
  </module>
  <module
    name="mm_bridge_0"
